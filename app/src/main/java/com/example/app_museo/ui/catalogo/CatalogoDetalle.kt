@@ -1,5 +1,6 @@
 package com.example.app_museo.ui.catalogo
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -24,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.app_museo.R
+import com.example.app_museo.ui.carrito.CarritoActivity
 import com.example.app_museo.ui.theme.App_museoTheme
 
 class CatalogoDetalleActivity : ComponentActivity() {
@@ -192,7 +194,11 @@ fun CatalogoDetalleScreen(
                     if (stock.contains("limitado", ignoreCase = true) && cantidad > 3) {
                         Toast.makeText(context, " Error: Stock insuficiente en el servidor para esa cantidad.", Toast.LENGTH_LONG).show()
                     } else {
-                        Toast.makeText(context, " ¡Solicitud exitosa! $cantidad unidad(es) procesada(s).", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, " ¡Producto agregado! Redirigiendo al carrito...", Toast.LENGTH_SHORT).show()
+
+
+                        val intent = Intent(context, CarritoActivity::class.java)
+                        context.startActivity(intent)
                     }
                 },
                 shape = RoundedCornerShape(14.dp),

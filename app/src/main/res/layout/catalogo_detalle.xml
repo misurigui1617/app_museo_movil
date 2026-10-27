@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F8F9FA">
+
+    <!-- Toolbar superior -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarDetalle"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="#FF9800"
+        android:minHeight="?attr/actionBarSize">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Detalle y Solicitud de Compra"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- Contenedor donde se dibuja la ficha detallada en Compose -->
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/composeViewDetalle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

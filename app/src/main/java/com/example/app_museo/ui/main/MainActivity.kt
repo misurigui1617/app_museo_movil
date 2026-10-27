@@ -2,98 +2,115 @@ package com.example.app_museo.ui.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.PreferenceManager
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import com.example.app_museo.R
+import com.example.app_museo.ui.carrito.CarritoActivity
+import com.example.app_museo.ui.catalogo.CatalogoActivity
 import com.example.app_museo.ui.mapa.MapaActivity
 import com.example.app_museo.ui.qr.QrActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import org.osmdroid.config.Configuration
+import com.google.android.material.card.MaterialCardView
+import com.google.android.material.navigation.NavigationView
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+    private lateinit var drawerLayout: DrawerLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
 
-        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        Configuration.getInstance().load(this, prefs)
-        Configuration.getInstance().userAgentValue = "AppMuseoChile/1.0"
-        Configuration.getInstance().save(this, prefs)
-
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbarHeader)
         setSupportActionBar(toolbar)
 
-        val tvNombre = findViewById<TextView>(R.id.tvMainNombre)
-        val tvRol = findViewById<TextView>(R.id.tvMainRol)
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigation)
+        drawerLayout = findViewById(R.id.drawerLayout)
+        val navView = findViewById<NavigationView>(R.id.navView)
+        navView.setNavigationItemSelectedListener(this)
 
-        val seccionCliente = findViewById<LinearLayout>(R.id.seccionCliente)
-        val seccionAdmin = findViewById<LinearLayout>(R.id.seccionAdmin)
-        val seccionInvestigador = findViewById<LinearLayout>(R.id.seccionInvestigador)
+        // Configurar botón hamburguesa en el Toolbar para abrir el menú lateral
+        val toggle = ActionBarDrawerToggle(
+            this, drawerLayout, toolbar,
+            R.string.navigation_drawer_open, R.string.navigation_drawer_close
+        )
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
 
-        val nombre = intent.getStringExtra("USUARIO_NOMBRE") ?: "Usuario"
-        val rol = intent.getStringExtra("USUARIO_ROL") ?: "Cliente"
-
-        tvNombre.text = nombre
-        tvRol.text = "Rol: $rol"
-
-        when (rol) {
-            "Administrador" -> {
-                seccionAdmin?.visibility = View.VISIBLE
-                seccionCliente?.visibility = View.GONE
-                seccionInvestigador?.visibility = View.GONE
-            }
-            "Investigador" -> {
-                seccionInvestigador?.visibility = View.VISIBLE
-                seccionCliente?.visibility = View.GONE
-                seccionAdmin?.visibility = View.GONE
-            }
-            else -> {
-                seccionCliente?.visibility = View.VISIBLE
-                seccionAdmin?.visibility = View.GONE
-                seccionInvestigador?.visibility = View.GONE
-            }
+        // Configurar Clics en las Cards del Centro
+        findViewById<MaterialCardView>(R.id.cardCarrito).setOnClickListener {
+            startActivity(Intent(this, CarritoActivity::class.java))
         }
 
-        bottomNav?.setOnItemSelectedListener { item ->
+        findViewById<MaterialCardView>(R.id.cardMapa).setOnClickListener {
+            startActivity(Intent(this, MapaActivity::class.java))
+        }
+
+        findViewById<MaterialCardView>(R.id.cardFavoritos).setOnClickListener {
+            Toast.makeText(this, "Sección de Favoritos", Toast.LENGTH_SHORT).show()
+        }
+
+        findViewById<MaterialCardView>(R.id.cardQr).setOnClickListener {
+            startActivity(Intent(this, QrActivity::class.java))
+        }
+
+        // Configurar Menú Inferior Mejorado
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigation)
+        bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_inicio -> true
                 R.id.nav_mapa -> {
-                    val intent = Intent(this, MapaActivity::class.java)
-                    startActivity(intent)
+                    startActivity(Intent(this, MapaActivity::class.java))
                     true
                 }
                 R.id.nav_catalogo -> {
-                    val intent = Intent(this, com.example.app_museo.ui.catalogo.CatalogoActivity::class.java)
-                    startActivity(intent)
+                    startActivity(Intent(this, CatalogoActivity::class.java))
                     true
                 }
-                R.id.nav_notificaciones -> true
-                R.id.nav_perfil -> true
+                R.id.nav_notificaciones -> {
+                    Toast.makeText(this, "Sin notificaciones nuevas", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                R.id.nav_perfil -> {
+                    Toast.makeText(this, "Pantalla de Perfil", Toast.LENGTH_SHORT).show()
+                    true
+                }
                 else -> false
             }
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
+    // Manejar opciones del Menú Lateral (Drawer)
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.nav_drawer_inicio -> {
+                // Ya estamos en inicio
+            }
+            R.id.nav_drawer_catalogo -> {
+                startActivity(Intent(this, CarritoActivity::class.java))
+            }
+            R.id.nav_drawer_mapa -> {
+                startActivity(Intent(this, MapaActivity::class.java))
+            }
+            R.id.nav_drawer_qr -> {
+                startActivity(Intent(this, QrActivity::class.java))
+            }
+            R.id.nav_drawer_perfil -> {
+                Toast.makeText(this, "Perfil de usuario", Toast.LENGTH_SHORT).show()
+            }
+        }
+        drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_qr_scanner -> {
-                val intent = Intent(this, QrActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
+    override fun onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
         }
     }
 }

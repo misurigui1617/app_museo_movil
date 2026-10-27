@@ -80,13 +80,13 @@ fun QrScreen() {
                 Box(
                     modifier = Modifier
                         .size(90.dp)
-                        .background(Color(0xFF673AB7).copy(alpha = 0.1f), shape = CircleShape),
+                        .background(Color(0xFFFF9800).copy(alpha = 0.1f), shape = CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Search,
                         contentDescription = null,
-                        tint = Color(0xFF673AB7),
+                        tint = Color(0xFFFF9800),
                         modifier = Modifier.size(40.dp)
                     )
                 }
@@ -114,7 +114,7 @@ fun QrScreen() {
                 Button(
                     onClick = { escanearQr() },
                     shape = RoundedCornerShape(14.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF673AB7)),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF9800)),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp)

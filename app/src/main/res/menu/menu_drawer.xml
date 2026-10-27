@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_drawer_inicio"
+            android:icon="@android:drawable/ic_menu_compass"
+            android:title="Inicio" />
+        <item
+            android:id="@+id/nav_drawer_catalogo"
+            android:icon="@android:drawable/ic_menu_agenda"
+            android:title="Catálogo / Carrito" />
+        <item
+            android:id="@+id/nav_drawer_mapa"
+            android:icon="@android:drawable/ic_menu_mapmode"
+            android:title="Mapa Interactivo" />
+        <item
+            android:id="@+id/nav_drawer_qr"
+            android:icon="@android:drawable/ic_menu_camera"
+            android:title="Escáner QR" />
+        <item
+            android:id="@+id/nav_drawer_perfil"
+            android:icon="@android:drawable/ic_menu_myplaces"
+            android:title="Mi Perfil" />
+    </group>
+</menu>

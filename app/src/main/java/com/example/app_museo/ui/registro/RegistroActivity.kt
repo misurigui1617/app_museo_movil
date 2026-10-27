@@ -36,8 +36,21 @@ class RegistroActivity : ComponentActivity() {
 
         val selectorGaleria = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             if (uri != null) {
-                imagenUri = uri.toString()
-                imgPerfil.setImageURI(uri)
+                try {
+                    val inputStream = contentResolver.openInputStream(uri)
+                    val file = java.io.File(filesDir, "perfil_${System.currentTimeMillis()}.jpg")
+                    inputStream?.use { input ->
+                        file.outputStream().use { output ->
+                            input.copyTo(output)
+                        }
+                    }
+                    imagenUri = file.absolutePath
+                    imgPerfil.setImageURI(Uri.fromFile(file))
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    imagenUri = uri.toString()
+                    imgPerfil.setImageURI(uri)
+                }
             }
         }
 

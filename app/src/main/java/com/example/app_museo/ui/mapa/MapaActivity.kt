@@ -2,23 +2,31 @@ package com.example.app_museo.ui.mapa
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.*
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.preference.PreferenceManager
 import com.example.app_museo.Lugar
 import com.example.app_museo.data.DatosPruebaMuseos
@@ -46,11 +54,13 @@ class MapaActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             App_museoTheme {
+                val context = LocalContext.current
                 val mapView = rememberMapView()
 
                 var textoBusqueda by remember { mutableStateOf("") }
                 var filtroSeleccionado by remember { mutableStateOf("Todos") }
                 var museoSeleccionado by remember { mutableStateOf<Lugar?>(null) }
+                var mostrarListaDialogo by remember { mutableStateOf(false) }
 
                 val museosFiltrados = remember(textoBusqueda, filtroSeleccionado) {
                     DatosPruebaMuseos.listaMuseos.filter { museo ->
@@ -116,14 +126,39 @@ class MapaActivity : ComponentActivity() {
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        FiltrosMapa(
-                            opciones = DatosPruebaMuseos.categoriasFiltro,
-                            opcionSeleccionada = filtroSeleccionado,
-                            alSeleccionarOpcion = { nuevaOpcion ->
-                                filtroSeleccionado = nuevaOpcion
-                                museoSeleccionado = null
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(modifier = Modifier.weight(1f)) {
+                                FiltrosMapa(
+                                    opciones = DatosPruebaMuseos.categoriasFiltro,
+                                    opcionSeleccionada = filtroSeleccionado,
+                                    alSeleccionarOpcion = { nuevaOpcion ->
+                                        filtroSeleccionado = nuevaOpcion
+                                        museoSeleccionado = null
+                                    }
+                                )
                             }
-                        )
+
+                            FloatingActionButton(
+                                onClick = { mostrarListaDialogo = true },
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .padding(start = 8.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.List,
+                                    contentDescription = "Listar Museos",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                        }
                     }
 
                     BotonesMapa(
@@ -166,6 +201,69 @@ class MapaActivity : ComponentActivity() {
                                 startActivity(intent)
                             },
                             modifier = Modifier.align(Alignment.BottomCenter)
+                        )
+                    }
+
+                    if (mostrarListaDialogo) {
+                        AlertDialog(
+                            onDismissRequest = { mostrarListaDialogo = false },
+                            title = { Text("Listado de Museos (${museosFiltrados.size})") },
+                            text = {
+                                LazyColumn(
+                                    modifier = Modifier.height(350.dp),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    items(museosFiltrados) { museo ->
+                                        Card(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .clickable {
+                                                    museoSeleccionado = museo
+                                                    mapView.controller.animateTo(museo.punto)
+                                                    mapView.controller.setZoom(16.0)
+                                                    mostrarListaDialogo = false
+                                                },
+                                            shape = RoundedCornerShape(12.dp),
+                                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                                        ) {
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(12.dp),
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Column(modifier = Modifier.weight(1f)) {
+                                                    Text(text = museo.nombre, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                                                    Spacer(modifier = Modifier.height(2.dp))
+                                                    Text(text = "${museo.pais} • ${museo.direccion}", fontSize = 12.sp, color = Color.Gray)
+                                                }
+
+                                                var esFavoritoItem by remember { mutableStateOf(false) }
+                                                IconButton(
+                                                    onClick = {
+                                                        esFavoritoItem = !esFavoritoItem
+                                                        val msg = if (esFavoritoItem) "¡Añadido a favoritos!" else "Quitado de favoritos"
+                                                        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                                                    },
+                                                    modifier = Modifier.size(36.dp)
+                                                ) {
+                                                    Icon(
+                                                        imageVector = if (esFavoritoItem) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                                                        contentDescription = "Favorito",
+                                                        tint = if (esFavoritoItem) Color.Red else Color.Gray
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            confirmButton = {
+                                TextButton(onClick = { mostrarListaDialogo = false }) {
+                                    Text("Cerrar")
+                                }
+                            }
                         )
                     }
                 }

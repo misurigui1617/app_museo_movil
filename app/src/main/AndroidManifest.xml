@@ -78,6 +78,18 @@
             android:name=".ui.favorito.FavoritosActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".ui.solicitudes.SolicitudesActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.notificaciones.NotificacionesActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.perfil.PerfilActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

@@ -23,6 +23,8 @@ import com.google.android.material.navigation.NavigationView
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var drawerLayout: DrawerLayout
+    private var nombreUsuario = "Usuario"
+    private var rolUsuario = "Cliente"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,12 +34,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val tvRol = findViewById<TextView>(R.id.tvMainRol)
         val imgPerfil = findViewById<ImageView>(R.id.imgMainPerfil)
 
-        val nombre = intent.getStringExtra("USUARIO_NOMBRE") ?: "Usuario"
-        val rol = intent.getStringExtra("USUARIO_ROL") ?: "Cliente"
+        nombreUsuario = intent.getStringExtra("USUARIO_NOMBRE") ?: "Usuario"
+        rolUsuario = intent.getStringExtra("USUARIO_ROL") ?: "Cliente"
         val fotoUri = intent.getStringExtra("USUARIO_FOTO")
 
-        tvNombre?.text = nombre
-        tvRol?.text = "Rol: $rol"
+        tvNombre?.text = nombreUsuario
+        tvRol?.text = "Rol: $rolUsuario"
 
         if (!fotoUri.isNullOrEmpty()) {
             try {
@@ -89,6 +91,28 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             startActivity(Intent(this, QrActivity::class.java))
         }
 
+        findViewById<MaterialCardView>(R.id.cardSolicitudes).setOnClickListener {
+            val intent = Intent(this, com.example.app_museo.ui.solicitudes.SolicitudesActivity::class.java).apply {
+                putExtra("USUARIO_ROL", rolUsuario)
+            }
+            startActivity(intent)
+        }
+
+        findViewById<MaterialCardView>(R.id.cardNotificaciones).setOnClickListener {
+            val intent = Intent(this, com.example.app_museo.ui.notificaciones.NotificacionesActivity::class.java).apply {
+                putExtra("USUARIO_ROL", rolUsuario)
+            }
+            startActivity(intent)
+        }
+
+        findViewById<MaterialCardView>(R.id.cardPerfil).setOnClickListener {
+            val intent = Intent(this, com.example.app_museo.ui.perfil.PerfilActivity::class.java).apply {
+                putExtra("USUARIO_NOMBRE", nombreUsuario)
+                putExtra("USUARIO_ROL", rolUsuario)
+            }
+            startActivity(intent)
+        }
+
         // Configurar Menú Inferior Mejorado
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigation)
         bottomNav.setOnItemSelectedListener { item ->
@@ -103,11 +127,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     true
                 }
                 R.id.nav_notificaciones -> {
-                    Toast.makeText(this, "Sin notificaciones nuevas", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, com.example.app_museo.ui.notificaciones.NotificacionesActivity::class.java).apply {
+                        putExtra("USUARIO_ROL", rolUsuario)
+                    }
+                    startActivity(intent)
                     true
                 }
                 R.id.nav_perfil -> {
-                    Toast.makeText(this, "Pantalla de Perfil", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, com.example.app_museo.ui.perfil.PerfilActivity::class.java).apply {
+                        putExtra("USUARIO_NOMBRE", nombreUsuario)
+                        putExtra("USUARIO_ROL", rolUsuario)
+                    }
+                    startActivity(intent)
                     true
                 }
                 else -> false
@@ -134,7 +165,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 startActivity(Intent(this, QrActivity::class.java))
             }
             R.id.nav_drawer_perfil -> {
-                Toast.makeText(this, "Perfil de usuario", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, com.example.app_museo.ui.perfil.PerfilActivity::class.java).apply {
+                    putExtra("USUARIO_NOMBRE", nombreUsuario)
+                    putExtra("USUARIO_ROL", rolUsuario)
+                }
+                startActivity(intent)
             }
         }
         drawerLayout.closeDrawer(GravityCompat.START)

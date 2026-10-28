@@ -206,7 +206,7 @@ fun QrScreen() {
                                 }
                             },
                             shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9C824A)),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF9800)),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(48.dp)

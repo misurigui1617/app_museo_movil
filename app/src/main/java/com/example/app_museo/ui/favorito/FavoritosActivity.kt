@@ -102,7 +102,13 @@ fun FavoritosScreen() {
                 FilterChip(
                     selected = filtroSeleccionado == filtro,
                     onClick = { filtroSeleccionado = filtro },
-                    label = { Text(filtro) }
+                    label = { Text(filtro, fontWeight = FontWeight.Bold) },
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = Color(0xFF9C824A),
+                        selectedLabelColor = Color.White,
+                        containerColor = Color(0xCCFFFFFF),
+                        labelColor = Color.Black
+                    )
                 )
             }
         }
@@ -111,7 +117,7 @@ fun FavoritosScreen() {
 
         if (elementosFiltrados.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = "No hay elementos en esta categoría.", color = Color.Gray, fontSize = 16.sp)
+                Text(text = "No hay elementos en esta categoría.", color = Color.White, fontSize = 16.sp)
             }
         } else {
             LazyColumn(
@@ -122,7 +128,7 @@ fun FavoritosScreen() {
                     Card(
                         shape = RoundedCornerShape(16.dp),
                         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xF2FFFFFF)),
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
@@ -161,7 +167,7 @@ fun FavoritosScreen() {
                                 Text(
                                     text = item.nombre,
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 16.sp,
+                                    fontSize = 15.sp,
                                     color = Color(0xFF1A202C)
                                 )
                                 Text(
@@ -171,19 +177,10 @@ fun FavoritosScreen() {
                                 )
                             }
 
-                            Column(
-                                horizontalAlignment = Alignment.End,
-                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            Box(
+                                modifier = Modifier.wrapContentWidth(),
+                                contentAlignment = Alignment.CenterEnd
                             ) {
-                                TextButton(
-                                    onClick = {
-                                        Toast.makeText(context, "Iniciando visita virtual a ${item.nombre}...", Toast.LENGTH_SHORT).show()
-                                    },
-                                    contentPadding = PaddingValues(0.dp)
-                                ) {
-                                    Text(text = "Visita 360°", color = Color(0xFFFF9800), fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                                }
-
                                 TextButton(
                                     onClick = {
                                         listaFavoritos.remove(item)
@@ -191,7 +188,7 @@ fun FavoritosScreen() {
                                     },
                                     contentPadding = PaddingValues(0.dp)
                                 ) {
-                                    Text(text = "Quitar", color = Color(0xFFE53935), fontSize = 12.sp)
+                                    Text(text = "Quitar", color = Color(0xFFE53935), fontSize = 12.sp, fontWeight = FontWeight.Bold)
                                 }
                             }
                         }

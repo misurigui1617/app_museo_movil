@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         findViewById<MaterialCardView>(R.id.cardFavoritos).setOnClickListener {
-            Toast.makeText(this, "Sección de Favoritos", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, com.example.app_museo.ui.favorito.FavoritosActivity::class.java))
         }
 
         findViewById<MaterialCardView>(R.id.cardQr).setOnClickListener {
@@ -126,6 +126,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_drawer_mapa -> {
                 startActivity(Intent(this, MapaActivity::class.java))
+            }
+            R.id.nav_drawer_favoritos -> {
+                startActivity(Intent(this, com.example.app_museo.ui.favorito.FavoritosActivity::class.java))
             }
             R.id.nav_drawer_qr -> {
                 startActivity(Intent(this, QrActivity::class.java))

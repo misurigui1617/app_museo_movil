@@ -14,6 +14,10 @@
             android:icon="@android:drawable/ic_menu_mapmode"
             android:title="Mapa Interactivo" />
         <item
+            android:id="@+id/nav_drawer_favoritos"
+            android:icon="@android:drawable/ic_menu_slideshow"
+            android:title="Favoritos" />
+        <item
             android:id="@+id/nav_drawer_qr"
             android:icon="@android:drawable/ic_menu_camera"
             android:title="Escáner QR" />

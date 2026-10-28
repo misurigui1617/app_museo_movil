@@ -1,6 +1,7 @@
 package com.example.app_museo.ui.qr
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -14,13 +15,17 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.app_museo.R
 import com.example.app_museo.data.Video
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
@@ -47,9 +52,10 @@ fun QrScreen() {
                     mensajeEstado = "¡Escaneo exitoso!"
                 } else {
                     videoLeido = Video(
-                        titulo = "Código Leído",
-                        descripcion = rawValue,
-                        url = if (rawValue.startsWith("http")) rawValue else ""
+                        titulo = "Museo de la Memoria",
+                        descripcion = "El Museo de la Memoria y los Derechos Humanos es un espacio en Santiago dedicado a dignificar a las víctimas y visibilizar las violaciones a los derechos humanos cometidas en Chile entre 1973 y 1990.",
+                        url = if (rawValue.startsWith("http")) rawValue else "",
+                        imagenResId = R.drawable.cat1
                     )
                     mensajeEstado = "QR leído correctamente"
                 }
@@ -167,6 +173,21 @@ fun QrScreen() {
                                 .padding(16.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(160.dp)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(Color(0xFFE2E8F0))
+                            ) {
+                                Image(
+                                    painter = painterResource(id = video.imagenResId),
+                                    contentDescription = video.titulo,
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+
                             Surface(
                                 shape = RoundedCornerShape(8.dp),
                                 color = Color(0xFFE2E8F0)
@@ -244,11 +265,17 @@ fun parsearJsonQr(jsonStr: String): Video? {
     return try {
         val json = JSONObject(jsonStr)
         Video(
-            titulo = json.optString("titulo", "Sin título"),
-            descripcion = json.optString("descripcion", "Sin descripción"),
-            url = json.optString("url", "")
+            titulo = json.optString("titulo", "Museo de la Memoria"),
+            descripcion = json.optString("descripcion", "El Museo de la Memoria y los Derechos Humanos es un espacio en Santiago dedicado a dignificar a las víctimas y visibilizar las violaciones a los derechos humanos cometidas en Chile entre 1973 y 1990."),
+            url = json.optString("url", ""),
+            imagenResId = R.drawable.museofotoqr
         )
     } catch (e: Exception) {
-        null
+        Video(
+            titulo = "Museo de la Memoria",
+            descripcion = "El Museo de la Memoria y los Derechos Humanos es un espacio en Santiago dedicado a dignificar a las víctimas y visibilizar las violaciones a los derechos humanos cometidas en Chile entre 1973 y 1990.",
+            url = if (jsonStr.startsWith("http")) jsonStr else "",
+            imagenResId = R.drawable.museofotoqr
+        )
     }
 }

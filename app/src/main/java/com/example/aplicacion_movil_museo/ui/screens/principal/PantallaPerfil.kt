@@ -57,10 +57,10 @@ fun PantallaPerfil(
             .verticalScroll(rememberScrollState())
             .padding(20.dp)
     ) {
-        // --- TARJETA DE PERFIL (SOLO NOMBRE, EMAIL Y FOTO) ---
+        // --- TARJETA DE PERFIL (EN NEGRO / GRIS OSCURO) ---
         Card(
             shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
             modifier = Modifier.fillMaxWidth()
         ) {
             Row(
@@ -85,7 +85,7 @@ fun PantallaPerfil(
                         Icon(
                             imageVector = Icons.Default.Person,
                             contentDescription = null,
-                            tint = Color.White,
+                            tint = Color.Black,
                             modifier = Modifier.size(36.dp)
                         )
                     }
@@ -96,7 +96,8 @@ fun PantallaPerfil(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = currentUser.name,
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                        color = Color.White
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(

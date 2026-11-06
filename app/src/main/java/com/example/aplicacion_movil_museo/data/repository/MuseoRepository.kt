@@ -1,5 +1,6 @@
 package com.example.aplicacion_movil_museo.data.repository
 
+import com.example.aplicacion_movil_museo.R
 import com.example.aplicacion_movil_museo.data.models.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,20 +24,72 @@ object MuseoRepository {
     private val _currentUser = MutableStateFlow<User>(defaultUsers[0])
     val currentUser: StateFlow<User> = _currentUser.asStateFlow()
 
-    // Museums Initial Data
+    // Museums Initial Data con asignación de imágenes locales de res/drawable/
     private val initialMuseums = listOf(
         Museum(
-            id = "m1",
-            name = "Museo del Prado Virtual",
-            country = "España",
-            city = "Madrid",
-            description = "Explora la colección de arte renacentista y barroco más destacada de Iberoamérica y Europa.",
-            classification = "Arte Clásico",
-            virtualTourUrl = "https://www.museodelprado.es/recorrido-virtual",
-            imageUrl = "https://images.unsplash.com/photo-1565008447742-97f6f38c985c?w=600",
-            latitude = 40.4138,
-            longitude = -3.6921,
+            id = "m_mmdh",
+            name = "Museo de la Memoria y los Derechos Humanos",
+            country = "Chile",
+            city = "Santiago",
+            description = "Espacio destinado a visibilizar las violaciones a los derechos humanos del Estado de Chile entre 1973 y 1990.",
+            classification = "Derechos Humanos",
+            virtualTourUrl = "https://mmdh.cl/museo",
+            imageResId = R.drawable.m_mmdh,
+            latitude = -33.4428,
+            longitude = -70.6781,
             isFavorite = true
+        ),
+        Museum(
+            id = "m3",
+            name = "Museo Nacional de Bellas Artes",
+            country = "Chile",
+            city = "Santiago",
+            description = "Principal centro de difusión de las artes visuales en Chile con exposiciones de pintura, escultura y patrimonio artístico.",
+            classification = "Bellas Artes",
+            virtualTourUrl = "https://www.mnba.gob.cl/virtual",
+            imageResId = R.drawable.m3,
+            latitude = -33.4358,
+            longitude = -70.6436,
+            isFavorite = true
+        ),
+        Museum(
+            id = "m5",
+            name = "Museo Histórico Nacional",
+            country = "Chile",
+            city = "Santiago",
+            description = "Institución encargada de divulgar la historia de Chile desde la época prehispánica.",
+            classification = "Historia",
+            virtualTourUrl = "https://www.mhn.gob.cl/virtual",
+            imageResId = R.drawable.m5,
+            latitude = -33.4380,
+            longitude = -70.6510,
+            isFavorite = false
+        ),
+        Museum(
+            id = "m6",
+            name = "Museo de Arte Contemporáneo MAC",
+            country = "Chile",
+            city = "Santiago",
+            description = "Espacio de investigación y difusión de artes visuales contemporáneas en Chile.",
+            classification = "Arte Contemporáneo",
+            virtualTourUrl = "https://www.mac.uchile.cl/virtual",
+            imageResId = R.drawable.m6,
+            latitude = -33.4352,
+            longitude = -70.6440,
+            isFavorite = true
+        ),
+        Museum(
+            id = "m7",
+            name = "Museo Nacional de Bellas Artes (MNBA)",
+            country = "Argentina",
+            city = "Buenos Aires",
+            description = "Uno de los museos más importantes de América Latina con obras maestras universales.",
+            classification = "Bellas Artes",
+            virtualTourUrl = "https://www.bellasartes.gob.ar/virtual",
+            imageResId = R.drawable.m7,
+            latitude = -34.5839,
+            longitude = -58.3931,
+            isFavorite = false
         ),
         Museum(
             id = "m2",
@@ -46,36 +99,23 @@ object MuseoRepository {
             description = "Espacio dedicado a las expresiones artísticas contemporáneas y vanguardias internacionales.",
             classification = "Arte Contemporáneo",
             virtualTourUrl = "https://museotamayo.org/virtual",
-            imageUrl = "https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=600",
+            imageResId = R.drawable.m2,
             latitude = 19.4260,
             longitude = -99.1812,
             isFavorite = false
         ),
         Museum(
-            id = "m3",
-            name = "Museo Nacional de Bellas Artes",
-            country = "Chile",
-            city = "Santiago",
-            description = "Principal centro de difusión de las artes visuales en Chile con recorridos virtuales 360°.",
-            classification = "Bellas Artes",
-            virtualTourUrl = "https://www.mnba.gob.cl/virtual",
-            imageUrl = "https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?w=600",
-            latitude = -33.4358,
-            longitude = -70.6436,
+            id = "m8",
+            name = "Museo Frida Kahlo (La Casa Azul)",
+            country = "México",
+            city = "Ciudad de México",
+            description = "Universo íntimo y legado artístico de Frida Kahlo y Diego Rivera.",
+            classification = "Biográfico",
+            virtualTourUrl = "https://www.museofridakahlo.org.mx/virtual",
+            imageResId = R.drawable.m8,
+            latitude = 19.3551,
+            longitude = -99.1625,
             isFavorite = true
-        ),
-        Museum(
-            id = "m4",
-            name = "Museo Botero",
-            country = "Colombia",
-            city = "Bogotá",
-            description = "Colección de obras donadas por el maestro Fernando Botero e hitos del arte moderno internacional.",
-            classification = "Arte Moderno",
-            virtualTourUrl = "https://www.banrepcultural.org/bogota/museo-botero",
-            imageUrl = "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=600",
-            latitude = 4.5968,
-            longitude = -74.0722,
-            isFavorite = false
         )
     )
 
@@ -84,10 +124,14 @@ object MuseoRepository {
 
     // Favorites per user ID
     private val _userFavorites = MutableStateFlow<Map<String, Set<String>>>(
-        mapOf("1" to setOf("m1", "m3"))
+        mapOf("1" to setOf("m_mmdh", "m3"))
     )
 
-    // Catalog Initial Data
+    private val _productFavorites = MutableStateFlow<Map<String, Set<String>>>(
+        mapOf("1" to setOf("p1", "p3"))
+    )
+
+    // Catalog Initial Data con asignación de imágenes locales cat1.jpg a cat4.jpg y stock
     private val initialCatalog = listOf(
         ProductCourse(
             id = "p1",
@@ -96,7 +140,8 @@ object MuseoRepository {
             price = 45000.0,
             description = "Capacitación profesional sobre diseño de exhibiciones, narrativa visual y conservación.",
             type = ItemType.COURSE,
-            imageUrl = "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600"
+            stock = 12,
+            imageResId = R.drawable.cat1
         ),
         ProductCourse(
             id = "p2",
@@ -105,7 +150,8 @@ object MuseoRepository {
             price = 18500.0,
             description = "Edición impresa con análisis de más de 120 galerías y centros culturales regionales.",
             type = ItemType.PRODUCT,
-            imageUrl = "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600"
+            stock = 25,
+            imageResId = R.drawable.cat2
         ),
         ProductCourse(
             id = "p3",
@@ -114,7 +160,8 @@ object MuseoRepository {
             price = 32000.0,
             description = "Insumos especializados libre de ácido para la preservación de manuscritos e impresos.",
             type = ItemType.PRODUCT,
-            imageUrl = "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=600"
+            stock = 8,
+            imageResId = R.drawable.cat3
         ),
         ProductCourse(
             id = "p4",
@@ -123,7 +170,8 @@ object MuseoRepository {
             price = 28000.0,
             description = "Estrategias participativas para la fidelización de visitantes e integración escolar.",
             type = ItemType.COURSE,
-            imageUrl = "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600"
+            stock = 15,
+            imageResId = R.drawable.cat4
         )
     )
 
@@ -155,7 +203,7 @@ object MuseoRepository {
     // QR Scan Records
     private val _qrRecords = MutableStateFlow<List<QrRecord>>(
         listOf(
-            QrRecord("qr1", "MUSEO-M1", "Museo del Prado Virtual", "Museo", "m1", "2025-05-12 10:30"),
+            QrRecord("qr1", "MMDH-CHILE", "Museo de la Memoria y los Derechos Humanos", "Museo", "m_mmdh", "2025-05-12 10:30"),
             QrRecord("qr2", "PUB-P2", "Anuario de Museos de Iberoamérica", "Publicación", "p2", "2025-05-12 11:15")
         )
     )
@@ -164,7 +212,7 @@ object MuseoRepository {
     // Notifications
     private val _notifications = MutableStateFlow<List<NotificationItem>>(
         listOf(
-            NotificationItem("n1", "Nuevo Museo Agregado", "Se integró la visita virtual del Museo Botero.", "Hace 2 horas", "map"),
+            NotificationItem("n1", "Nuevo Museo Agregado", "Se integró el Museo de la Memoria y los Derechos Humanos.", "Hace 2 horas", "map"),
             NotificationItem("n2", "Inscripción Abierta", "El taller de Mediación Cultural ya tiene cupos disponibles.", "Ayer", "catalog"),
             NotificationItem("n3", "Estado de Pedido Actualizado", "Tu pedido ORD-1001 ha sido Confirmado.", "Hace 3 días", "history")
         )
@@ -185,7 +233,7 @@ object MuseoRepository {
         }
     }
 
-    // Registro de Usuario: Asignación AUTOMÁTICA y OBLIGATORIA de rol Cliente (UserRole.CLIENT)
+    // Registro de Usuario
     fun registerUser(name: String, email: String, password: String, avatarUrl: String): Boolean {
         if (name.isBlank() || email.isBlank() || password.isBlank()) return false
 
@@ -194,12 +242,11 @@ object MuseoRepository {
             name = name,
             email = email,
             password = password,
-            role = UserRole.CLIENT, // Asignación de rol Cliente estricta y automática
+            role = UserRole.CLIENT,
             avatarUrl = avatarUrl.ifBlank { "https://picsum.photos/203" }
         )
 
         _usersList.update { it + newUser }
-        // Se guarda el usuario registrado en el repositorio sin iniciar sesión automáticamente
         return true
     }
 
@@ -225,7 +272,8 @@ object MuseoRepository {
         }
     }
 
-    // Favorites Management
+    fun obtenerMuseos(): List<Museum> = _museums.value
+
     fun toggleFavorite(museumId: String) {
         val uid = _currentUser.value.id
         _userFavorites.update { map ->
@@ -248,6 +296,31 @@ object MuseoRepository {
         val uid = _currentUser.value.id
         val favIds = _userFavorites.value[uid] ?: emptySet()
         return _museums.value.filter { favIds.contains(it.id) }
+    }
+
+    // Product Favorites Management
+    fun toggleProductFavorite(productId: String) {
+        val uid = _currentUser.value.id
+        _productFavorites.update { map ->
+            val currentFavs = map[uid] ?: emptySet()
+            val updatedFavs = if (currentFavs.contains(productId)) {
+                currentFavs - productId
+            } else {
+                currentFavs + productId
+            }
+            map + (uid to updatedFavs)
+        }
+    }
+
+    fun isProductFavorite(productId: String): Boolean {
+        val uid = _currentUser.value.id
+        return _productFavorites.value[uid]?.contains(productId) ?: false
+    }
+
+    fun getFavoriteProducts(): List<ProductCourse> {
+        val uid = _currentUser.value.id
+        val favIds = _productFavorites.value[uid] ?: emptySet()
+        return _catalog.value.filter { favIds.contains(it.id) }
     }
 
     // Cart Management
@@ -337,26 +410,55 @@ object MuseoRepository {
         )
     }
 
-    // QR Scan Handling
-    fun processQrCode(rawCode: String): QrRecord {
+    // --- LÓGICA DE PROCESAMIENTO Y VALIDACIÓN DE CÓDIGOS QR ---
+    fun processQrCode(rawCode: String): QrRecord? {
+        if (rawCode.isBlank()) return null
         val codeUpper = rawCode.uppercase().trim()
+
         val record = when {
-            codeUpper.contains("MUSEO") || codeUpper.contains("M1") -> {
-                QrRecord(UUID.randomUUID().toString(), codeUpper, "Museo del Prado Virtual", "Museo", "m1", getCurrentTimestamp())
+            codeUpper.contains("MMDH") || codeUpper.contains("DERECHOS") || codeUpper.contains("MMDH.CL") -> {
+                QrRecord(
+                    id = UUID.randomUUID().toString(),
+                    code = "MMDH-CHILE",
+                    title = "Museo de la Memoria y los Derechos Humanos",
+                    type = "Museo",
+                    targetId = "m_mmdh",
+                    timestamp = getCurrentTimestamp()
+                )
             }
-            codeUpper.contains("PUB") || codeUpper.contains("P2") -> {
-                QrRecord(UUID.randomUUID().toString(), codeUpper, "Anuario de Museos de Iberoamérica", "Publicación", "p2", getCurrentTimestamp())
+            codeUpper.contains("MUSEO") || codeUpper.contains("M3") || codeUpper.contains("BELLAS ARTES") -> {
+                QrRecord(
+                    id = UUID.randomUUID().toString(),
+                    code = "MUSEO-M3",
+                    title = "Museo Nacional de Bellas Artes",
+                    type = "Museo",
+                    targetId = "m3",
+                    timestamp = getCurrentTimestamp()
+                )
+            }
+            codeUpper.contains("PUB") || codeUpper.contains("P2") || codeUpper.contains("ANUARIO") -> {
+                QrRecord(
+                    id = UUID.randomUUID().toString(),
+                    code = "PUB-P2",
+                    title = "Anuario de Museos de Iberoamérica",
+                    type = "Publicación",
+                    targetId = "p2",
+                    timestamp = getCurrentTimestamp()
+                )
             }
             else -> {
-                QrRecord(UUID.randomUUID().toString(), codeUpper, "Recurso Cultural Generico", "Producto", "p1", getCurrentTimestamp())
+                null
             }
         }
 
-        _qrRecords.update { current ->
-            if (current.none { it.code == record.code }) {
-                listOf(record) + current
-            } else current
+        if (record != null) {
+            _qrRecords.update { current ->
+                if (current.none { it.code == record.code }) {
+                    listOf(record) + current
+                } else current
+            }
         }
+
         return record
     }
 

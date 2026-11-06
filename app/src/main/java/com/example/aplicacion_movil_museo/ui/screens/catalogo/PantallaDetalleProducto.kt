@@ -1,17 +1,23 @@
 package com.example.aplicacion_movil_museo.ui.screens.catalogo
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.aplicacion_movil_museo.data.models.ItemType
@@ -37,13 +43,27 @@ fun PantallaDetalleProducto(
         return
     }
 
+    var isFav by remember { mutableStateOf(MuseoRepository.isProductFavorite(item.id)) }
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(item.title) },
                 navigationIcon = {
                     IconButton(onClick = onVolver) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {
+                        MuseoRepository.toggleProductFavorite(item.id)
+                        isFav = !isFav
+                    }) {
+                        Icon(
+                            imageVector = if (isFav) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            contentDescription = "Favorito",
+                            tint = MaterialTheme.colorScheme.error
+                        )
                     }
                 }
             )
@@ -61,19 +81,26 @@ fun PantallaDetalleProducto(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(180.dp)
-                        .background(
-                            MaterialTheme.colorScheme.surfaceVariant,
-                            RoundedCornerShape(16.dp)
-                        ),
+                        .height(200.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(MaterialTheme.colorScheme.surfaceVariant),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = if (item.type == ItemType.COURSE) Icons.Default.School else Icons.Default.Book,
-                        contentDescription = null,
-                        modifier = Modifier.size(64.dp),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
+                    if (item.imageResId != 0) {
+                        Image(
+                            painter = painterResource(id = item.imageResId),
+                            contentDescription = item.title,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        Icon(
+                            imageVector = if (item.type == ItemType.COURSE) Icons.Default.School else Icons.Default.Book,
+                            contentDescription = null,
+                            modifier = Modifier.size(64.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -97,6 +124,32 @@ fun PantallaDetalleProducto(
                             color = Color(0xFF2E7D32),
                             style = MaterialTheme.typography.labelMedium,
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Indicador claro de Stock
+                Surface(
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Inventory2,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Stock disponible: ${item.stock} unidades",
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
                 }
@@ -152,7 +205,10 @@ fun PantallaDetalleProducto(
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                         )
 
-                        IconButton(onClick = { quantity++ }) {
+                        IconButton(
+                            onClick = { if (quantity < item.stock) quantity++ },
+                            enabled = quantity < item.stock
+                        ) {
                             Icon(Icons.Default.AddCircleOutline, contentDescription = "Sumar")
                         }
                     }
@@ -189,12 +245,12 @@ fun PantallaDetalleProducto(
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Icon(
-                        imageVector = if (item.type == ItemType.COURSE) Icons.Default.Assignment else Icons.Default.ShoppingCart,
+                        imageVector = if (item.type == ItemType.COURSE) Icons.AutoMirrored.Filled.Assignment else Icons.Default.ShoppingCart,
                         contentDescription = null
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = if (item.type == ItemType.COURSE) "Solicitar Información / Inscripción"
+                        text = if (item.type == ItemType.COURSE) "añadir al carrito"
                         else "Agregar al Carrito ($${(item.price * quantity).toInt()} CLP)"
                     )
                 }

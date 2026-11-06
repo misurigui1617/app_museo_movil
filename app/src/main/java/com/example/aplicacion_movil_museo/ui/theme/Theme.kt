@@ -1,6 +1,5 @@
 package com.example.aplicacion_movil_museo.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -14,31 +13,52 @@ private val DarkColorScheme = darkColorScheme(
     background = DarkBackground,
     surface = DarkSurface,
     surfaceVariant = DarkSurfaceVariant,
+    primaryContainer = Color(0xFF242424),   // Tarjetas principales en gris oscuro (Cero Morado)
+    onPrimaryContainer = Color.White,
+    secondaryContainer = Color(0xFF2C2C2C),
+    onSecondaryContainer = Color.White,
+    tertiaryContainer = Color(0xFF2C2C2C),
+    onTertiaryContainer = Color.White,
+    surfaceContainer = Color(0xFF1E1E1E),
+    surfaceContainerHigh = Color(0xFF252525),
+    surfaceContainerHighest = Color(0xFF2C2C2C),
     onPrimary = Color.Black,
     onSecondary = Color.Black,
     onBackground = Color.White,
-    onSurface = Color.White
+    onSurface = Color.White,
+    onSurfaceVariant = Color(0xFFE0E0E0)
 )
 
-private val LightColorScheme = lightColorScheme(
+private val LightColorScheme = darkColorScheme( // Forzamos paleta oscura elegante siempre
     primary = OrangePrimary,
     secondary = OrangeSecondary,
     tertiary = OrangeTertiary,
-    background = Color(0xFFFAFAFA),
-    surface = Color.White,
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F)
+    background = DarkBackground,
+    surface = DarkSurface,
+    surfaceVariant = DarkSurfaceVariant,
+    primaryContainer = Color(0xFF242424),
+    onPrimaryContainer = Color.White,
+    secondaryContainer = Color(0xFF2C2C2C),
+    onSecondaryContainer = Color.White,
+    tertiaryContainer = Color(0xFF2C2C2C),
+    onTertiaryContainer = Color.White,
+    surfaceContainer = Color(0xFF1E1E1E),
+    surfaceContainerHigh = Color(0xFF252525),
+    surfaceContainerHighest = Color(0xFF2C2C2C),
+    onPrimary = Color.Black,
+    onSecondary = Color.Black,
+    onBackground = Color.White,
+    onSurface = Color.White,
+    onSurfaceVariant = Color(0xFFE0E0E0)
 )
 
 @Composable
 fun Aplicacion_movil_museoTheme(
-    darkTheme: Boolean = true, // Forzamos modo oscuro por defecto para resaltar el negro
-    dynamicColor: Boolean = false, // Desactivamos el color dinámico de Android 12+ para mantener tu tema naranja
+    darkTheme: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+    val colorScheme = DarkColorScheme
 
     MaterialTheme(
         colorScheme = colorScheme,

@@ -19,13 +19,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.example.aplicacion_movil_museo.R
 import com.example.aplicacion_movil_museo.data.models.*
 import com.example.aplicacion_movil_museo.data.repository.MuseoRepository
 
@@ -61,211 +64,235 @@ fun PantallaPrincipal(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp)
-    ) {
-        Card(
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
-            ),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Row(
-                modifier = Modifier.padding(20.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (avatarBitmap != null) {
-                        Image(
-                            bitmap = avatarBitmap,
-                            contentDescription = "Foto de perfil de ${currentUser.name}",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    } else {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier.size(36.dp)
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.width(16.dp))
-
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = currentUser.name,
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Text(
-            text = "Accesos Rápidos",
-            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+    Box(modifier = Modifier.fillMaxSize()) {
+        // --- 1. IMAGEN DE FONDO LOCAL (fondo.jpg) CON OPACIDAD ---
+        Image(
+            painter = painterResource(id = R.drawable.fondo),
+            contentDescription = "Fondo Museo",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
         )
-        Spacer(modifier = Modifier.height(12.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        // Capa Oscura Semitransparente para Legibilidad
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.85f))
+        )
+
+        // --- 2. CONTENIDO PRINCIPAL DE LA PANTALLA ---
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp)
         ) {
-            BotonAccesoRapido(
-                title = "Escáner QR",
-                icon = Icons.Default.QrCodeScanner,
-                modifier = Modifier.weight(1f),
-                onClick = onNavegarAEscanerQr
-            )
-            BotonAccesoRapido(
-                title = "Favoritos",
-                icon = Icons.Default.Favorite,
-                modifier = Modifier.weight(1f),
-                onClick = onNavegarAFavoritos
-            )
-            BotonAccesoRapido(
-                title = "Carrito",
-                icon = Icons.Default.ShoppingCart,
-                modifier = Modifier.weight(1f),
-                onClick = onNavegarACarrito
-            )
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        when (currentUser.role) {
-            UserRole.CLIENT -> {
-                Text(
-                    text = "Museos Virtuales Destacados",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    items(museums) { museum ->
-                        TarjetaMuseo(museum = museum, onClick = { onNavegarADetalleMuseo(museum.id) })
+            Card(
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier.padding(20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(64.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primary),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (avatarBitmap != null) {
+                            Image(
+                                bitmap = avatarBitmap,
+                                contentDescription = "Foto de perfil de ${currentUser.name}",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                modifier = Modifier.size(36.dp)
+                            )
+                        }
                     }
-                }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.width(16.dp))
 
-                Text(
-                    text = "Cursos y Publicaciones de Interés",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    catalog.take(2).forEach { item ->
-                        ItemResumenCatalogo(item = item, onClick = onNavegarACatalogo)
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = currentUser.name,
+                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
                     }
                 }
             }
 
-            UserRole.INVESTIGATOR -> {
-                Text(
-                    text = "Investigación y Fichas Museológicas",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                )
-                Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-                Card(
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = "Museos Registrados en Iberoamérica: ${museums.size}",
-                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
-                        )
-                        Text(
-                            text = "Lecturas QR Realizadas: ${qrRecords.size}",
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(top = 4.dp)
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Button(
-                            onClick = onNavegarAMapa,
-                            shape = RoundedCornerShape(10.dp)
-                        ) {
-                            Text("Explorar Mapa e Investigar Fichas")
+            Text(
+                text = "Accesos Rápidos",
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                color = Color.White
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                BotonAccesoRapido(
+                    title = "Escáner QR",
+                    icon = Icons.Default.QrCodeScanner,
+                    modifier = Modifier.weight(1f),
+                    onClick = onNavegarAEscanerQr
+                )
+                BotonAccesoRapido(
+                    title = "Favoritos",
+                    icon = Icons.Default.Favorite,
+                    modifier = Modifier.weight(1f),
+                    onClick = onNavegarAFavoritos
+                )
+                BotonAccesoRapido(
+                    title = "Carrito",
+                    icon = Icons.Default.ShoppingCart,
+                    modifier = Modifier.weight(1f),
+                    onClick = onNavegarACarrito
+                )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            when (currentUser.role) {
+                UserRole.CLIENT -> {
+                    Text(
+                        text = "Museos Virtuales Destacados",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        color = Color.White
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        items(museums) { museum ->
+                            TarjetaMuseo(museum = museum, onClick = { onNavegarADetalleMuseo(museum.id) })
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Text(
+                        text = "Cursos y Publicaciones de Interés",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        color = Color.White
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        catalog.take(2).forEach { item ->
+                            ItemResumenCatalogo(item = item, onClick = onNavegarACatalogo)
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                UserRole.INVESTIGATOR -> {
+                    Text(
+                        text = "Investigación y Fichas Museológicas",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        color = Color.White
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
 
-                Text(
-                    text = "Últimos Registros Escaneados",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-
-                qrRecords.take(3).forEach { record ->
                     Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp)
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Row(
-                            modifier = Modifier.padding(12.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(
+                                text = "Museos Registrados en Iberoamérica: ${museums.size}",
+                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
+                            )
+                            Text(
+                                text = "Lecturas QR Realizadas: ${qrRecords.size}",
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Button(
+                                onClick = onNavegarAMapa,
+                                shape = RoundedCornerShape(10.dp)
+                            ) {
+                                Text("Explorar Mapa e Investigar Fichas")
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    Text(
+                        text = "Últimos Registros Escaneados",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        color = Color.White
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    qrRecords.take(3).forEach { record ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp)
                         ) {
-                            Icon(Icons.Default.QrCode, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Column {
-                                Text(record.title, fontWeight = FontWeight.Bold)
-                                Text("${record.type} • ${record.timestamp}", style = MaterialTheme.typography.bodySmall)
+                            Row(
+                                modifier = Modifier.padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(Icons.Default.QrCode, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column {
+                                    Text(record.title, fontWeight = FontWeight.Bold)
+                                    Text("${record.type} • ${record.timestamp}", style = MaterialTheme.typography.bodySmall)
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            UserRole.ADMIN -> {
-                Text(
-                    text = "Panel de Gestión de Solicitudes",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                )
-                Spacer(modifier = Modifier.height(12.dp))
+                UserRole.ADMIN -> {
+                    Text(
+                        text = "Panel de Gestión de Solicitudes",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        color = Color.White
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
 
-                Card(
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = "Solicitudes Recibidas: ${orders.size}",
-                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
-                        )
-                        Text(
-                            text = "Pendientes de Confirmar: ${orders.count { it.status == RequestStatus.PENDING }}",
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(top = 4.dp)
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Button(
-                            onClick = onNavegarAHistorial,
-                            shape = RoundedCornerShape(10.dp)
-                        ) {
-                            Text("Gestionar Solicitudes y Cambiar Estado")
+                    Card(
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(
+                                text = "Solicitudes Recibidas: ${orders.size}",
+                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
+                            )
+                            Text(
+                                text = "Pendientes de Confirmar: ${orders.count { it.status == RequestStatus.PENDING }}",
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Button(
+                                onClick = onNavegarAHistorial,
+                                shape = RoundedCornerShape(10.dp)
+                            ) {
+                                Text("Gestionar Solicitudes y Cambiar Estado")
+                            }
                         }
                     }
                 }
@@ -321,16 +348,26 @@ private fun TarjetaMuseo(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(110.dp)
-                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp)),
+                    .height(115.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Default.Museum,
-                    contentDescription = null,
-                    modifier = Modifier.size(48.dp),
-                    tint = MaterialTheme.colorScheme.primary
-                )
+                if (museum.imageResId != 0) {
+                    Image(
+                        painter = painterResource(id = museum.imageResId),
+                        contentDescription = museum.name,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.Museum,
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(

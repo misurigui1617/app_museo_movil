@@ -18,7 +18,8 @@ data class Museum(
     val description: String,
     val classification: String,
     val virtualTourUrl: String,
-    val imageUrl: String,
+    val imageUrl: String = "",
+    val imageResId: Int = 0,
     val latitude: Double,
     val longitude: Double,
     val isFavorite: Boolean = false
@@ -34,7 +35,9 @@ data class ProductCourse(
     val description: String,
     val type: ItemType,
     val isAvailable: Boolean = true,
-    val imageUrl: String = ""
+    val stock: Int = 15,
+    val imageUrl: String = "",
+    val imageResId: Int = 0
 )
 
 data class CartItem(

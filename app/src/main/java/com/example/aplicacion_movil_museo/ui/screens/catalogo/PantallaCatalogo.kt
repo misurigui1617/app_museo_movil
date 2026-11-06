@@ -1,5 +1,6 @@
 package com.example.aplicacion_movil_museo.ui.screens.catalogo
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,7 +14,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.aplicacion_movil_museo.data.models.*
@@ -162,7 +166,8 @@ fun PantallaCatalogo(
                                 category = newCategory.ifBlank { "General" },
                                 price = priceVal,
                                 description = newDescription.ifBlank { "Descripción del recurso" },
-                                type = if (isCourse) ItemType.COURSE else ItemType.PRODUCT
+                                type = if (isCourse) ItemType.COURSE else ItemType.PRODUCT,
+                                stock = 10
                             )
                         )
                         showAddDialog = false
@@ -187,6 +192,7 @@ private fun FilaElementoCatalogo(
     onAddToCart: () -> Unit
 ) {
     var addedNotice by remember { mutableStateOf(false) }
+    var isFav = MuseoRepository.isProductFavorite(item.id)
 
     Card(
         modifier = Modifier
@@ -200,19 +206,28 @@ private fun FilaElementoCatalogo(
         ) {
             Box(
                 modifier = Modifier
-                    .size(60.dp)
+                    .size(70.dp)
+                    .clip(RoundedCornerShape(12.dp))
                     .background(
-                        if (item.type == ItemType.COURSE) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.secondaryContainer,
-                        RoundedCornerShape(12.dp)
+                        if (item.type == ItemType.COURSE) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.secondaryContainer
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = if (item.type == ItemType.COURSE) Icons.Default.School else Icons.Default.Book,
-                    contentDescription = null,
-                    tint = if (item.type == ItemType.COURSE) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier.size(32.dp)
-                )
+                if (item.imageResId != 0) {
+                    Image(
+                        painter = painterResource(id = item.imageResId),
+                        contentDescription = item.title,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
+                    Icon(
+                        imageVector = if (item.type == ItemType.COURSE) Icons.Default.School else Icons.Default.Book,
+                        contentDescription = null,
+                        tint = if (item.type == ItemType.COURSE) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(16.dp))
@@ -227,22 +242,42 @@ private fun FilaElementoCatalogo(
                     style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
                 )
                 Text(
+                    text = "Stock disponible: ${item.stock} unidades",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
                     text = "$${item.price.toInt()} CLP",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
                 )
             }
 
-            IconButton(
-                onClick = {
-                    onAddToCart()
-                    addedNotice = true
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                IconButton(
+                    onClick = {
+                        MuseoRepository.toggleProductFavorite(item.id)
+                        isFav = !isFav
+                    }
+                ) {
+                    Icon(
+                        imageVector = if (isFav) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = "Favorito",
+                        tint = MaterialTheme.colorScheme.error
+                    )
                 }
-            ) {
-                Icon(
-                    imageVector = if (addedNotice) Icons.Default.Check else Icons.Default.AddShoppingCart,
-                    contentDescription = "Agregar al carrito",
-                    tint = if (addedNotice) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
-                )
+
+                IconButton(
+                    onClick = {
+                        onAddToCart()
+                        addedNotice = true
+                    }
+                ) {
+                    Icon(
+                        imageVector = if (addedNotice) Icons.Default.Check else Icons.Default.AddShoppingCart,
+                        contentDescription = "Agregar al carrito",
+                        tint = if (addedNotice) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                    )
+                }
             }
         }
     }

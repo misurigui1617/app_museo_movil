@@ -1,16 +1,24 @@
 package com.example.aplicacion_movil_museo.ui.screens.museos
 
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.aplicacion_movil_museo.data.models.UserRole
@@ -22,6 +30,7 @@ fun PantallaDetalleMuseo(
     museumId: String,
     onVolver: () -> Unit
 ) {
+    val context = LocalContext.current
     val currentUser by MuseoRepository.currentUser.collectAsState()
     val museums by MuseoRepository.museums.collectAsState()
     val museum = museums.find { it.id == museumId } ?: museums.firstOrNull()
@@ -46,7 +55,7 @@ fun PantallaDetalleMuseo(
                 title = { Text(museum.name) },
                 navigationIcon = {
                     IconButton(onClick = onVolver) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
                     }
                 },
                 actions = {
@@ -68,31 +77,43 @@ fun PantallaDetalleMuseo(
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp)
         ) {
+            // Header Image Box con Imagen Local del Museo (R.drawable.m3, etc.)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
-                    .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(16.dp)),
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(MaterialTheme.colorScheme.primaryContainer),
                 contentAlignment = Alignment.Center
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(
-                        imageVector = Icons.Default.Museum,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(64.dp)
+                if (museum.imageResId != 0) {
+                    Image(
+                        painter = painterResource(id = museum.imageResId),
+                        contentDescription = museum.name,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = museum.name,
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
+                } else {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            imageVector = Icons.Default.Museum,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(60.dp)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = museum.name,
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // Chips
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 SuggestionChip(
                     onClick = { },
@@ -106,14 +127,16 @@ fun PantallaDetalleMuseo(
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
+            // Seccion 1: ¿Qué es este museo?
             Text(
-                text = "Descripción y Reseña Cultural",
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                text = "¿Qué es este museo?",
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.primary
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
             if (isEditing && (currentUser.role == UserRole.INVESTIGATOR || currentUser.role == UserRole.ADMIN)) {
                 OutlinedTextField(
@@ -149,8 +172,26 @@ fun PantallaDetalleMuseo(
                 )
             }
 
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // Seccion 2: ¿Qué verás aquí?
+            Text(
+                text = "¿Qué verás aquí?",
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Text(
+                text = "Exposiciones patrimoniales, obras de arte de la categoría ${museum.classification}, colecciones históricas y recorridos temáticos representativos de ${museum.city}, ${museum.country}.",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
             Spacer(modifier = Modifier.height(24.dp))
 
+            // Seccion 3: Sitio Web Oficial / Enlace del Museo
             Card(
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
@@ -158,29 +199,37 @@ fun PantallaDetalleMuseo(
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = "Recorrido Virtual 360°",
+                        text = "Sitio Web Oficial del Museo",
                         style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
                     )
                     Text(
-                        text = "Enlace oficial a la experiencia inmersiva digital.",
+                        text = "Accede a la página oficial del museo para consultar exposiciones, horarios e información actualizada.",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(14.dp))
                     Button(
-                        onClick = { },
+                        onClick = {
+                            try {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(museum.virtualTourUrl))
+                                context.startActivity(intent)
+                            } catch (e: Exception) {
+                                // Fallback si la url no abre
+                            }
+                        },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(10.dp)
                     ) {
                         Icon(Icons.Default.Language, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Iniciar Visita Virtual")
+                        Text("Abrir Sitio Web del Museo")
                     }
                 }
             }
 
             Spacer(modifier = Modifier.height(20.dp))
 
+            // Role Controls
             when (currentUser.role) {
                 UserRole.INVESTIGATOR -> {
                     Text(

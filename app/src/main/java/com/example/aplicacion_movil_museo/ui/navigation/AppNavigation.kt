@@ -353,9 +353,10 @@ fun AppNavigation() {
                 route = Screen.ResultadoQr.route,
                 arguments = listOf(navArgument("code") { type = NavType.StringType })
             ) { backStackEntry ->
-                val code = backStackEntry.arguments?.getString("code") ?: ""
+                val rawCode = backStackEntry.arguments?.getString("code") ?: ""
+                val decodedCode = android.net.Uri.decode(rawCode)
                 PantallaResultadoQr(
-                    scannedCode = code,
+                    scannedCode = decodedCode,
                     onNavegarADetalleMuseo = { museumId ->
                         navController.navigate(Screen.DetalleMuseo.crearRuta(museumId))
                     },
